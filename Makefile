@@ -1,4 +1,5 @@
-CFLAGS=-Wall -Wextra -Werror -m32 -ffreestanding -g
+INC_DIRS=include/
+CFLAGS=-I$(INC_DIRS) -Wall -Wextra -Werror -m32 -ffreestanding -g
 LDFLAGS=-T link-default.ld -melf_i386
 
 
