@@ -10,11 +10,10 @@ section .multiboot
 section .text
 global _start
 extern oct_main
-extern kmain
 
 _start:
   mov     esp, stack_start
-  call    kmain
+  call    oct_main
   cli                         ; disable interrupts to prevent race conditions
 hlt_loop:
   hlt
