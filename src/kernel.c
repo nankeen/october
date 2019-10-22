@@ -1,41 +1,4 @@
-#ifndef KERNEL_H
-#define KERNEL_H
-
-typedef unsigned char uint8;
-typedef unsigned short uint16;
-typedef unsigned int uint32;
-
-#define VGA_ADDRESS 0xB8000
-#define BUFSIZE 2200
-
-enum vga_color {
-    BLACK,
-    BLUE,
-    GREEN,
-    CYAN,
-    RED,
-    MAGENTA,
-    BROWN,
-    GREY,
-    DARK_GREY,
-    BRIGHT_BLUE,
-    BRIGHT_GREEN,
-    BRIGHT_CYAN,
-    BRIGHT_RED,
-    BRIGHT_MAGENTA,
-    YELLOW,
-    WHITE,
-};
-
-#endif
-
-#ifndef V_BUF_COL
-#define V_BUF_COL 80
-#endif
-
-#ifndef V_BUF_ROW
-#define V_BUF_ROW 25
-#endif
+#include "vga.h"
 
 void
 oct_v_write(char *dst, const char * src, char attr_byte, long len)
@@ -61,7 +24,7 @@ oct_main()
     // Character byte
     v_buf[i] = ' ';
     // Attribute byte set
-    v_buf[i + 1] = 0x00;
+    v_buf[i + 1] = BLACK;
   }
 
   oct_v_write(v_buf, "October OS Booting...", GREEN | BLACK << 8, 100);
