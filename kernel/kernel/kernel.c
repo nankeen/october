@@ -1,7 +1,10 @@
-#include "vga.h"
 
-void
-oct_v_write(char *dst, const char * src, char attr_byte, long len)
+#include <kernel/tty.h>
+
+void oct_v_write(char *dst, const char * src, char attr_byte, long len);
+void oct_main(void);
+
+void oct_v_write(char *dst, const char * src, char attr_byte, long len)
 {
   // TODO: Implement checks so len < (V_BUF_ROW * V_BUF_COL)
   for (int i = 0; i < len && src[i] != '\0'; i++)
@@ -11,8 +14,7 @@ oct_v_write(char *dst, const char * src, char attr_byte, long len)
   }
 }
 
-void
-oct_main()
+void oct_main()
 {
 
   // 25 rows with 80 columns and each with 2 elements (character byte and attribute byte)

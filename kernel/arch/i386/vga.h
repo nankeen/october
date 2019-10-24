@@ -1,8 +1,9 @@
 #ifndef VGA_H
 #define VGA_H
 
+#include <stdint.h>
+
 #define VGA_ADDRESS 0xB8000
-#define BUFSIZE 2200
 
 enum vga_color {
     BLACK,
@@ -30,5 +31,8 @@ enum vga_color {
 #ifndef V_BUF_ROW
 #define V_BUF_ROW 25
 #endif
+
+uint8_t vga_color_attr(enum vga_color foreground, enum vga_color background);
+uint16_t vga_entry(unsigned char character, uint8_t color);
 
 #endif
