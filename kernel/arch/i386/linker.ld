@@ -4,6 +4,7 @@ SECTIONS
 {
 	/* we need 1MB of space atleast */
 	. = 1M;
+  ker_start = .;
 
   	/* text section */
 	.text BLOCK(4K) : ALIGN(4K)
@@ -30,4 +31,6 @@ SECTIONS
 		*(COMMON)
 		*(.bss)
 	}
+  
+  ker_end = .;
 }
