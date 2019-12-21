@@ -2,7 +2,6 @@
 .section ".text.boot"
 
 .global _start
-.type _start, @function
 _start:
 				// Halt co-processors
 				mrc p15, #0, r1, c0, c0, #5
@@ -39,9 +38,6 @@ _start:
 
 				// Initialize kernel and start main process
 				ldr r3, =ker_init
-				blx r3
-				
-				ldr r3, =ker_main
 				blx r3
 			 
 				// halt

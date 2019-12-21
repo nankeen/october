@@ -1,41 +1,34 @@
-HOSTARCH = i386
-ARCHDIR = arch/$(HOSTARCH)
-PROJDIRS = .
+.PHONY: all clean install run
 
-SRCFILES := $(shell find $(PROJDIRS) -type f -name "*.c") $(shell find $(PROJDIRS) -type f -name "*.s")
-HDRFILES := $(shell find $(PROJDIRS) -type f -name "*.h")
-OBJFILES := $(patsubst %.c,%.o,$(SRCFILES))
+HOSTARCH=aarch32
+HOSTARCH_DIR=arch/aarch32
 
-ALLFILES := $(SRCFILES) $(HDRFILES) $(AUXFILES)
+export AR=arm-none-eabi-ar
+export AS=arm-none-eabi-as
+export CC=arm-none-eabi-gcc
+export CPP=arm-none-eabi-g++
 
-INC_DIRS = include/
-WARNINGS := -Wall -Wextra -pedantic -Wshadow -Wpointer-arith -Wcast-align \
-            -Wwrite-strings -Wmissing-prototypes -Wmissing-declarations \
-            -Wredundant-decls -Wnested-externs -Winline -Wno-long-long \
-            -Wconversion -Wstrict-prototypes
-CFLAGS := -g $(WARNINGS) -I$(INC_DIRS) -I$(ARCHDIR) -m32 -ffreestanding -nostdlib
-LDFLAGS = -T link-default.ld -melf_i386
+export PROJDIR=$(shell pwd)
+export INCLUDE=-I $(PROJDIR)/include
+export CFLAGS=-mcpu=arm1176jzf-s -fpic -ffreestanding -std=gnu99 -Wall -Wextra -Werror -g3 -D__arch_$(HOSTARCH)
+export LIBS=-nostdlib -Larch/aarch32 -Lkernel
+export LDFLAGS=-lkernel -larch 
 
+OBJS=\
+kernel/main.o \
+$(HOSTARCH_DIR)/boot/boot.o
 
-.PHONY: all clean dist check testdrivers todolist
+all: kernel.elf
 
-all: kernel.bin
-
-kernel.bin: $(OBJFILES) $(ARCHDIR)/linker.ld
-	$(CC) -T $(ARCHDIR)/linker.ld -o $@ $(CFLAGS) $(OBJFILES)
-
-.c.o:
-	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
-
-.s.o:
-	$(CC) -MD -c $< -o $@ $(CFLAGS) $(CPPFLAGS)
+kernel.elf:
+	cd kernel && $(MAKE) && cd ../
+	cd $(HOSTARCH_DIR) && $(MAKE) && cd ../../
+	$(CC) -T $(HOSTARCH_DIR)/linker.ld -o $@ $(OBJS) $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 clean:
-	rm -f kernel.bin
-	rm -f $(OBJS) *.o */*.o */*/*.o
-	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
+	rm kernel.elf
+	cd kernel && $(MAKE) clean && cd ../
+	cd $(HOSTARCH_DIR) && $(MAKE) clean && cd ../../
 
--include $(OBJS:.o=.d)
-
-run: kernel.bin
-	qemu-system-i386 -kernel $<
+run: kernel.elf
+	qemu-system-arm -m 256 -M raspi2 -serial stdio -kernel kernel.elf
