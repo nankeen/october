@@ -26,7 +26,8 @@ stack_top:
 _start:
         # setup stack
         movl                    $stack_top, %esp
-        call                    oct_main
+        call                    ker_init
+				call 										ker_main
 
         cli
 1:      hlt

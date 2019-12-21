@@ -3,7 +3,7 @@
 
 #include <stddef.h>
 #include <stdint.h>
-#include <vga.h>
+#include <i386/vga.h>
 
 void tty_init(void);
 void tty_putat(char c, uint8_t color, size_t x, size_t y);

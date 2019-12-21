@@ -36,3 +36,6 @@ clean:
 	rm -f $(OBJS:.o=.d) *.d */*.d */*/*.d
 
 -include $(OBJS:.o=.d)
+
+run: kernel.bin
+	qemu-system-i386 -kernel $<

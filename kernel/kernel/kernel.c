@@ -2,7 +2,8 @@
 #include <kernel/tty.h>
 
 void oct_v_write(char *dst, const char * src, char attr_byte, long len);
-void oct_main(void);
+void ker_main(void);
+void ker_init(void);
 
 void oct_v_write(char *dst, const char * src, char attr_byte, long len)
 {
@@ -14,7 +15,11 @@ void oct_v_write(char *dst, const char * src, char attr_byte, long len)
   }
 }
 
-void oct_main()
+void ker_init()
+{
+}
+
+void ker_main()
 {
 
   // 25 rows with 80 columns and each with 2 elements (character byte and attribute byte)
