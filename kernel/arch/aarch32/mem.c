@@ -16,6 +16,7 @@ IMPLEMENT_LIST(page);
 */
 
 static page_t * all_pages_array;
+
 page_list_t free_pages;
 
 void mem_init(atag_t * atags) {
