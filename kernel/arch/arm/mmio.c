@@ -1,4 +1,4 @@
-#include <aarch32/gpio.h>
+#include <arm/mmio.h>
 
 void mmio_write(uint32_t reg, uint32_t data)
 {
