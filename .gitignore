@@ -6,3 +6,4 @@ isodir/
 *.d
 *.a
 *.elf
+kernel/build/

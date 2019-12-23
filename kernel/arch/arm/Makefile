@@ -3,8 +3,7 @@
 #CFLAGS=-mcpu=cortex-a7 -fpic -ffreestanding
 
 OBJS=\
-		 gpio.o\
-		 mem.o
+		 mmio.o
 
 all: libarch.a boot/boot.o
 

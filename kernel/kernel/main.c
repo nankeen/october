@@ -1,6 +1,6 @@
 #include <kernel/tty.h>
 
-#ifdef __arch_aarch32
+#ifdef __arch_arm
 
 void ker_main()
 {
@@ -13,7 +13,7 @@ void ker_init(uint32_t r0, uint32_t r1, uint32_t atags)
   (void) r1;
   (void) atags;
 
-  tty_init();
+  tty_init(115200, UART1);
   ker_main();
 }
 

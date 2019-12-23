@@ -1,34 +1,48 @@
 .PHONY: all clean install run
 
-HOSTARCH=aarch32
-HOSTARCH_DIR=arch/aarch32
+HOSTARCH=arm
+HOSTARCH_DIR=arch/$(HOSTARCH)
+
+export BUILD_DIR=./build
 
 export AR=arm-none-eabi-ar
 export AS=arm-none-eabi-as
 export CC=arm-none-eabi-gcc
 export CPP=arm-none-eabi-g++
+export LD=arm-none-eabi-ld
 
-export PROJDIR=$(shell pwd)
-export INCLUDE=-I $(PROJDIR)/include
-export CFLAGS=-mcpu=arm1176jzf-s -fpic -ffreestanding -std=gnu99 -Wall -Wextra -Werror -g3 -D__arch_$(HOSTARCH)
-export LIBS=-nostdlib -Larch/aarch32 -Lkernel
-export LDFLAGS=-lkernel -larch 
+export SRC_DIR=.
+export INCLUDE=-I $(SRC_DIR)/include
+export CFLAGS=-mcpu=cortex-a7 -MMD -mgeneral-regs-only -fpic -ffreestanding -std=gnu99 -Wall -Wextra -Werror -g3 -D__arch_$(HOSTARCH)
+export LIBS=-nostdlib -nostartfiles
+export LDFLAGS=
 
-OBJS=\
-kernel/main.o \
-$(HOSTARCH_DIR)/boot/boot.o
+$(BUILD_DIR)/%_c.o: $(SRC_DIR)/%.c
+	mkdir -p $(@D)
+	$(CC) $(CFLAGS) $(INCLUDE) -c $< -o $@
+
+$(BUILD_DIR)/%_s.o: $(SRC_DIR)/%.s
+	mkdir -p $(@D)
+	$(CC) $(INCLUDE) $(CFLAGS) -MMD -c $< -o $@
+
+C_FILES = $(shell find $(SRC_DIR) -type f -regex ".*\.c")
+ASM_FILES = $(shell find $(SRC_DIR) -type f -regex ".*\.s")
+OBJ_FILES = $(C_FILES:$(SRC_DIR)/%.c=$(BUILD_DIR)/%_c.o)
+OBJ_FILES += $(ASM_FILES:$(SRC_DIR)/%.s=$(BUILD_DIR)/%_s.o)
+
+DEP_FILES = $(OBJ_FILES:%.o=%.d)
+	-include $(DEP_FILES)
 
 all: kernel.elf
 
-kernel.elf:
-	cd kernel && $(MAKE) && cd ../
-	cd $(HOSTARCH_DIR) && $(MAKE) && cd ../../
-	$(CC) -T $(HOSTARCH_DIR)/linker.ld -o $@ $(OBJS) $(CFLAGS) $(LDFLAGS) $(LIBS)
+kernel.elf: $(OBJ_FILES)
+	echo $(C_FILES)
+	$(CC) -T $(HOSTARCH_DIR)/linker.ld -o $@  $(OBJ_FILES) $(CFLAGS) $(LDFLAGS) $(LIBS)
 
 clean:
-	rm kernel.elf
-	cd kernel && $(MAKE) clean && cd ../
-	cd $(HOSTARCH_DIR) && $(MAKE) clean && cd ../../
+	rm -r $(BUILD_DIR) kernel.elf
 
+# UART1: qemu-system-arm -m 256 -M raspi2 -serial null -serial stdio -kernel kernel.elf
+# UART0: qemu-system-arm -m 256 -M raspi2 -serial stdio -kernel kernel.elf
 run: kernel.elf
-	qemu-system-arm -m 256 -M raspi2 -serial stdio -kernel kernel.elf
+	qemu-system-arm -m 256 -M raspi2 -serial null -serial stdio -kernel kernel.elf
