@@ -1,6 +1,6 @@
 #include <stddef.h>
 #include <stdint.h>
-#include <aarch32/atag.h>
+#include <arm/atag.h>
 
 #ifndef MEM_H
 #define MEM_H

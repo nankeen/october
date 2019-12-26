@@ -1,3 +1,4 @@
+/*
 #include <aarch32/mem.h>
 
 size_t get_mem_size(atag_t* tag)
@@ -10,12 +11,11 @@ extern uint8_t __end;
 
 static uint32_t num_pages;
 
-/*
 DEFINE_LIST(page);
 IMPLEMENT_LIST(page);
-*/
 
 static page_t * all_pages_array;
+
 page_list_t free_pages;
 
 void mem_init(atag_t * atags) {
@@ -47,3 +47,4 @@ void mem_init(atag_t * atags) {
 
 }
 
+*/
